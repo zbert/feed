@@ -1,7 +1,7 @@
 import * as convert from "xml-js";
 import { generator } from "./config";
 import { Feed } from "./feed";
-import { Author, Category, Enclosure, Item } from "./typings";
+import { Author, Category, Enclosure, Item, Timezone } from "./typings";
 import { sanitize } from "./utils";
 
 /**
@@ -12,6 +12,8 @@ export default (ins: Feed) => {
   let isAtom = false;
   let isContent = false;
 
+  const formatDate = new FormatDate(options.timezone)
+
   const base: any = {
     _declaration: { _attributes: { version: "1.0", encoding: "utf-8" } },
     rss: {
@@ -20,7 +22,7 @@ export default (ins: Feed) => {
         title: { _text: options.title },
         link: { _text: sanitize(options.link) },
         description: { _text: options.description },
-        lastBuildDate: { _text: options.updated ? options.updated.toUTCString() : new Date().toUTCString() },
+        lastBuildDate: { _text: options.updated ? formatDate.set(options.updated) : formatDate.set(new Date()) },
         docs: { _text: options.docs ? options.docs : "https://validator.w3.org/feed/docs/rss2.html" },
         generator: { _text: options.generator || generator },
       },
@@ -135,11 +137,11 @@ export default (ins: Feed) => {
     }
 
     if (entry.date) {
-      item.pubDate = { _text: entry.date.toUTCString() };
+      item.pubDate = { _text: formatDate.set(entry.date) };
     }
 
     if (entry.published) {
-      item.pubDate = { _text: entry.published.toUTCString() };
+      item.pubDate = { _text: formatDate.set(entry.published) };
     }
 
     if (entry.description) {
@@ -235,3 +237,20 @@ const formatCategory = (category: Category) => {
     },
   };
 };
+
+/**
+ * Returns a timezone formmatted Date String
+ * @param timezone
+ * @param mimeCategory
+ */
+class FormatDate {
+  timezone: Timezone;
+
+  constructor(userTimezone: Timezone = 'GMT') {
+    this.timezone = userTimezone;
+  }
+
+  set(date: Date): String {
+    return date.toUTCString().replace(/GMT$/, this.timezone);
+  }
+}

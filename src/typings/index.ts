@@ -52,6 +52,7 @@ export interface FeedOptions {
   generator?: string;
   language?: string;
   ttl?: number;
+  timezone?: Timezone;
 
   feed?: string;
   feedLinks?: any;
@@ -70,3 +71,36 @@ export interface Extension {
   name: string;
   objects: any;
 }
+
+export type Timezone = 'GMT' |
+  'UTC' |
+  'ECT' |
+  'EET' |
+  'ART' |
+  'EAT' |
+  'MET' |
+  'NET' |
+  'PLT' |
+  'IST' |
+  'BST' |
+  'VST' |
+  'CTT' |
+  'JST' |
+  'ACT' |
+  'AET' |
+  'SST' |
+  'NST' |
+  'MIT' |
+  'HST' |
+  'AST' |
+  'PST' |
+  'PNT' |
+  'MST' |
+  'CST' |
+  'EST' |
+  'IET' |
+  'PRT' |
+  'CNT' |
+  'AGT' |
+  'BET' |
+  'CA'
